@@ -1,1 +1,14 @@
+# Import necessary libraries
+from sage.all import *
+
+class QuiverRepresentation:
+    def __init__(self, vertices=['v1'], edges=[('v1','v1')], dimension_vector=[1]):
+        self.vertices = vertices  # Q_0: Set of vertices
+        self.edges = edges  # Q_1: Set of edges (tuples of vertices)
+        self.dimension_vector = dimension_vector  # alpha: Dimension vector
+
+    def display(self):
+        print("Vertices (Q_0):", self.vertices)
+        print("Edges (Q_1):", self.edges)
+        print("Dimension vector (alpha):", self.dimension_vector)
 
