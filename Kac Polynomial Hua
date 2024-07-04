@@ -2,13 +2,40 @@
 from sage.all import *
 
 class QuiverRepresentation:
-    def __init__(self, vertices=['v1'], edges=[('v1','v1')], dimension_vector=[1]):
+    """
+    A class to represent a quiver with vertices, edges, and a dimension vector.
+    
+    Attributes:
+    vertices : list
+        A list of vertices (Q_0) in the quiver.
+    edges : list of tuples
+        A list of directed edges (Q_1) represented as tuples (start_vertex, end_vertex).
+    dimension_vector : list
+        A list representing the dimension vector (alpha) corresponding to each vertex.
+    """
+
+    def __init__(self, vertices, edges, dimension_vector):
+        """
+        Initializes the quiver representation with vertices, edges, and dimension vector.
+        
+        Parameters:
+        vertices : list
+            The set of vertices (Q_0).
+        edges : list of tuples
+            The set of directed edges (Q_1).
+        dimension_vector : list
+            The dimension vector (alpha) for the vertices.
+        """
         self.vertices = vertices  # Q_0: Set of vertices
         self.edges = edges  # Q_1: Set of edges (tuples of vertices)
         self.dimension_vector = dimension_vector  # alpha: Dimension vector
 
     def display(self):
+        """
+        Prints the vertices, edges, and dimension vector of the quiver.
+        """
         print("Vertices (Q_0):", self.vertices)
         print("Edges (Q_1):", self.edges)
         print("Dimension vector (alpha):", self.dimension_vector)
+
 
