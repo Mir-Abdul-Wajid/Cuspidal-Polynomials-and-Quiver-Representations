@@ -1,6 +1,8 @@
 # Import necessary libraries
 from sage.all import *
 
+#################################################################################
+
 class QuiverRepresentation:
     """
     A class to represent a quiver with vertices, edges, and a dimension vector.
@@ -37,5 +39,81 @@ class QuiverRepresentation:
         print("Vertices (Q_0):", self.vertices)
         print("Edges (Q_1):", self.edges)
         print("Dimension vector (alpha):", self.dimension_vector)
+        
+    def count_edges_between(self, vertex1, vertex2):
+        """
+        Counts the number of edges between two vertices.
+        
+        Parameters:
+        vertex1 : any
+            
+        vertex2 : any
+        
+        Returns:
+        int
+            The number of edges between vertex1 and vertex2.
+        """
+        if vertex1 == vertex2:
+            return self.edges.count((vertex1, vertex2))
+        else:
+            return self.edges.count((vertex1, vertex2)) + self.edges.count((vertex2, vertex1))
 
+    def P_numerator(self):
+        """
+        Make sure to double check indices,
+        
+        input: n partitions as an array Part
+        
+        Output: Monomial in q 
+        """
+        power = 0
+        l = len(self.dimension_vector)
+        m = max(self.dimension_vector)
+        P = []
+        for i in range(m+1):
+            P = P + Partitions(i).list()
+            
+        for i in l:
+            for j in l:
+                vertex1 = self.vertices(i)
+                vertex2 = self.vertices(j)
+                aij = self.count_edges_between(vertex1,vertex2)
+                ip = inner_product_partitions(Part[i], Part[j])
+                
+                power = power + aij * ip
+                
+        # Define the polynomial variable
+        q = var('q')
+        
+        # Create the polynomial 
+        numerator = q^power
+        
+        return numerator
+                
+
+
+
+####################################################################################
+
+
+def inner_product_partitions(partition1, partition2):
+
+    # Convert the partitions to Conjugates
+    partition1c = Partition(partition1).conjugate()
+    partition2c = Partition(partition2).conjugate()
+    print(partition1c)
+    print(partition2c)
+    # Compute the inner product as the dot product
+    inner_product = 0
+    m = min(len(partition1c), len(partition2c))
+    for i in range(m):
+        inner_product = inner_product + partition1c[i] * partition2c[i]
+        
+    
+    return inner_product
+
+
+
+
+####################################################################################
 
