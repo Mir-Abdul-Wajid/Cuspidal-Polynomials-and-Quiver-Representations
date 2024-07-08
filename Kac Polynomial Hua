@@ -2,6 +2,11 @@
 from sage.all import *
 
 #################################################################################
+R.<q> = QQ[]
+
+
+
+#################################################################################
 
 class QuiverRepresentation:
     """
@@ -88,8 +93,7 @@ class QuiverRepresentation:
                 
                 power = power + aij * ip
                 
-        # Define the polynomial variable
-        q = var('q')
+       
         
         # Create the polynomial 
         numerator = q^power
@@ -125,9 +129,10 @@ def b_pi(partition):
     for i in exp:
         product = product * Phi(i)
         
+    return product
+        
 
 def Phi(int):
-    q = var('q')
     product = 1
     if int == 0:
         return 1
