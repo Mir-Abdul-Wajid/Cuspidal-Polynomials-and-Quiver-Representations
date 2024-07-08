@@ -121,7 +121,8 @@ def inner_product_partitions(partition1, partition2):
 def b_pi(partition):
     
     product = 1
-    for i in partition:
+    exp = Partition(partition).to_exp()
+    for i in exp:
         product = product * Phi(i)
         
 
