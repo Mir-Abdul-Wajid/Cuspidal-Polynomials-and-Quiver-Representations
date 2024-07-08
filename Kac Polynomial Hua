@@ -118,6 +118,24 @@ def inner_product_partitions(partition1, partition2):
     
     return inner_product
 
+def b_pi(partition):
+    
+    product = 1
+    for i in partition:
+        product = product * Phi(i)
+        
+
+def Phi(int):
+    q = var('q')
+    product = 1
+    if int == 0:
+        return 1
+    else:
+        for i in range(1,int+1):
+            product = product*(1-q^(-i))
+        
+        return product
+
 
 
 
