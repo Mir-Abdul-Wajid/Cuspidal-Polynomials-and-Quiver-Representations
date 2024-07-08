@@ -31,6 +31,12 @@ class QuiverRepresentation:
         self.vertices = vertices  # Q_0: Set of vertices
         self.edges = edges  # Q_1: Set of edges (tuples of vertices)
         self.dimension_vector = dimension_vector  # alpha: Dimension vector
+        self.partitions = []
+        
+        for i in range(len(dimension_vector)):
+            self.partitions.append([])
+            for j in range(dimension_vector[i]+1):
+                self.partitions[i] = self.partitions[i] + Partitions(j).list()
 
     def display(self):
         """
