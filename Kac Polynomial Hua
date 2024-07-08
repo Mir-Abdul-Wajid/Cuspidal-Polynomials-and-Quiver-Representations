@@ -4,7 +4,7 @@ from sage.all import *
 #################################################################################
 R.<q> = QQ[]
 
-
+K = R.fraction_field
 
 #################################################################################
 
@@ -79,13 +79,10 @@ class QuiverRepresentation:
         """
         power = 0
         l = len(self.dimension_vector)
-        m = max(self.dimension_vector)
-        P = []
-        for i in range(m+1):
-            P = P + Partitions(i).list()
+        
             
-        for i in l:
-            for j in l:
+        for i in range(1,l):
+            for j in range(i,l):
                 vertex1 = self.vertices(i)
                 vertex2 = self.vertices(j)
                 aij = self.count_edges_between(vertex1,vertex2)
@@ -93,12 +90,38 @@ class QuiverRepresentation:
                 
                 power = power + aij * ip
                 
-       
+        
         
         # Create the polynomial 
         numerator = q^power
         
         return numerator
+    
+    def P_donominator(self):
+        """
+        Make sure to double check indices,
+        
+        input: n partitions as an array 
+        
+        Output: Polynomial in q 
+        """
+        
+        l = len(self.dimension_vector)
+        
+        denominator = 1   
+        for i in range(1,l):
+            ip = inner_product_partitions(Part[i], Part[i])
+            b = b_pi(Part[i])
+            denominator = denominator * q^ip * b
+            
+            
+                
+        
+        
+        # Create the polynomial 
+        
+        
+        return denominator
                 
 
 
