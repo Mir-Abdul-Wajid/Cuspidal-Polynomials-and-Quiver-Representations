@@ -191,8 +191,10 @@ class QuiverRepresentation:
         Div = divisors(a)
         
         A_gamma = 0
-        aplha = self.dimension_vector
+        
         for i in Div:
+            alpha = []
+            alpha = alpha + self.dimension_vector
             for j in range(len(alpha)):
                 alpha[j] = alpha[j]/i 
             w = q^i
