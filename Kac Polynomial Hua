@@ -6,7 +6,6 @@ R.<q> = QQ[]
 
 K = R.fraction_field
 
-R.<X> = K[]
 
 #################################################################################
 
@@ -38,8 +37,11 @@ class QuiverRepresentation:
         self.vertices = vertices  # Q_0: Set of vertices
         self.edges = edges  # Q_1: Set of edges (tuples of vertices)
         self.dimension_vector = dimension_vector  # alpha: Dimension vector
-        self.partitions = []
+
+        T = PolynomialRing(K[],len(dimension_vector),"X")
         
+        self.partitions = []
+
         for i in range(len(dimension_vector)):
             self.partitions.append([])
             for j in range(dimension_vector[i]+1):
@@ -71,50 +73,83 @@ class QuiverRepresentation:
         else:
             return self.edges.count((vertex1, vertex2)) + self.edges.count((vertex2, vertex1))
 
-    def P_numerator(self):
+    def P_numerator(self, Part):
         """
         Make sure to double check indices,
-        
+
         input: n partitions as an array Part
-        
-        Output: Monomial in q 
+
+        Output: Monomial in q
         """
         power = 0
         l = len(self.dimension_vector)
-        
-            
+
+
         for i in range(1,l):
             for j in range(i,l):
                 vertex1 = self.vertices(i)
                 vertex2 = self.vertices(j)
                 aij = self.count_edges_between(vertex1,vertex2)
                 ip = inner_product_partitions(Part[i], Part[j])
-                
+
                 power = power + aij * ip
-                
-        
-        
-        # Create the polynomial 
+
+
+
+        # Create the polynomial
         numerator = q^power
-        
+
         return numerator
-    
-    def P_donominator(self):
+
+    def P_donominator(self, Part):
         """
         Make sure to double check indices,
-        
-        input: n partitions as an array 
-        
-        Output: Polynomial in q 
+
+        input: n partitions as an array
+
+        Output: Polynomial in q
         """
-        
+
         l = len(self.dimension_vector)
-        
-        denominator = 1   
+
+        denominator = 1
         for i in range(1,l):
             ip = inner_product_partitions(Part[i], Part[i])
             b = b_pi(Part[i])
             denominator = denominator * q^ip * b
+
+
+
+
+
+        # Create the polynomial
+
+
+        return denominator
+
+    def P_Gamma(self):
+        """
+        To compute the polynomial P_{\Gamma}(X_1,X_2,...,X_n,q)
+        
+        Input: 
+        
+        Output:
+
+        """
+        
+        P_gamma = 1
+        
+        # Generate the Cartesian product of the lists
+        cartesian_product = itertools.product(*self.partitions)
+
+        # Iterate over each combination in the Cartesian product
+        for combination in cartesian_product:
+            V = 1
+            for i in combination:
+                V = V*X{i}^sum(combination[i])
+            P_gamma = P_gamma + (P_numerator(combination)/P_denominator(combination)) * V
+            
+        return P_gamma
             
             
                 
