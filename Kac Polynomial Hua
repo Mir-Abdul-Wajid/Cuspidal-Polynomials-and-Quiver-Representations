@@ -88,8 +88,9 @@ class QuiverRepresentation:
             for j in range(i, l):
                 vertex1 = self.vertices[i]
                 vertex2 = self.vertices[j]
-                aij = self.count_edges_between(vertex1, vertex2)
                 ip = inner_product_partitions(Part[i], Part[j])
+                
+                aij = self.count_edges_between(vertex1, vertex2)                               
                 power = power + aij * ip
 
         numerator = q^power
@@ -110,12 +111,13 @@ class QuiverRepresentation:
             ip = inner_product_partitions(Part[i], Part[i])
             b = b_pi(Part[i])
             denominator = denominator * q^ip * b
+            
 
         return denominator
 
     def P_Gamma(self):
         """
-        To compute the polynomial P_{\Gamma}(X_1,X_2,...,X_n,q)
+        To compute the polynomial P_{Gamma}(X_1,X_2,...,X_n,q)
         
         Input: 
         
@@ -160,6 +162,8 @@ def b_pi(partition):
         
     return product
 
+
+    
 def Phi(n):
     product = 1
     if n == 0:
@@ -167,6 +171,5 @@ def Phi(n):
     else:
         for i in range(1, n+1):
             product = product * (1 - q^(-i))
-        
         return product
 
