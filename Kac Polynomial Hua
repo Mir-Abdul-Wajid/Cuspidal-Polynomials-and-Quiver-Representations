@@ -196,7 +196,10 @@ class QuiverRepresentation:
             for j in range(len(alpha)):
                 alpha[j] = alpha[j]/i 
             w = q^i
-            A_gamma = A_gamma + moebius(i) * self.H_Gamma(alpha, w)
+            if moebius(i) == 0:
+                A_gamma = A_gamma
+            else:
+                A_gamma = A_gamma + moebius(i) * self.H_Gamma(alpha, w)
             
             
         A_gamma = b * A_gamma
@@ -241,4 +244,3 @@ def Phi(n, w):
         return product
 
 ####################################################################################
-
