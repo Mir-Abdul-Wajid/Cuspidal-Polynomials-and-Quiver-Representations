@@ -4,9 +4,7 @@ import itertools
 
 #################################################################################
 R.<q> = QQ[]
-
-K = R.fraction_field
-
+K = R.fraction_field()
 
 #################################################################################
 
@@ -38,14 +36,16 @@ class QuiverRepresentation:
         self.vertices = vertices  # Q_0: Set of vertices
         self.edges = edges  # Q_1: Set of edges (tuples of vertices)
         self.dimension_vector = dimension_vector  # alpha: Dimension vector
-
-        T = PolynomialRing(K[],len(dimension_vector),"X")
+        
+        variable_names = [f'x{i+1}' for i in range(len(dimension_vector))]
+        T = PolynomialRing(K, len(dimension_vector), variable_names)
+        self.variables = T.gens()
         
         self.partitions = []
 
         for i in range(len(dimension_vector)):
             self.partitions.append([])
-            for j in range(dimension_vector[i]+1):
+            for j in range(dimension_vector[i] + 1):
                 self.partitions[i] = self.partitions[i] + Partitions(j).list()
 
     def display(self):
@@ -62,8 +62,9 @@ class QuiverRepresentation:
         
         Parameters:
         vertex1 : any
-            
+            First vertex
         vertex2 : any
+            Second vertex
         
         Returns:
         int
@@ -76,8 +77,6 @@ class QuiverRepresentation:
 
     def P_numerator(self, Part):
         """
-        Make sure to double check indices,
-
         input: n partitions as an array Part
 
         Output: Monomial in q
@@ -85,27 +84,20 @@ class QuiverRepresentation:
         power = 0
         l = len(self.dimension_vector)
 
-
-        for i in range(1,l):
-            for j in range(i,l):
-                vertex1 = self.vertices(i)
-                vertex2 = self.vertices(j)
-                aij = self.count_edges_between(vertex1,vertex2)
+        for i in range(l):
+            for j in range(i, l):
+                vertex1 = self.vertices[i]
+                vertex2 = self.vertices[j]
+                aij = self.count_edges_between(vertex1, vertex2)
                 ip = inner_product_partitions(Part[i], Part[j])
-
                 power = power + aij * ip
 
-
-
-        # Create the polynomial
         numerator = q^power
 
         return numerator
 
-    def P_donominator(self, Part):
+    def P_denominator(self, Part):
         """
-        Make sure to double check indices,
-
         input: n partitions as an array
 
         Output: Polynomial in q
@@ -114,17 +106,10 @@ class QuiverRepresentation:
         l = len(self.dimension_vector)
 
         denominator = 1
-        for i in range(1,l):
+        for i in range(l):
             ip = inner_product_partitions(Part[i], Part[i])
             b = b_pi(Part[i])
             denominator = denominator * q^ip * b
-
-
-
-
-
-        # Create the polynomial
-
 
         return denominator
 
@@ -138,7 +123,7 @@ class QuiverRepresentation:
 
         """
         
-        P_gamma = 1
+        P_gamma = 0
         
         # Generate the Cartesian product of the lists
         cartesian_product = itertools.product(*self.partitions)
@@ -146,65 +131,42 @@ class QuiverRepresentation:
         # Iterate over each combination in the Cartesian product
         for combination in cartesian_product:
             V = 1
-            for i in combination:
-                V = V*X{i}^sum(combination[i])
-            P_gamma = P_gamma + (P_numerator(combination)/P_denominator(combination)) * V
+            for i in range(len(combination)):
+                V = V * self.variables[i]^sum(combination[i])
+            P_gamma = P_gamma + (self.P_numerator(combination) / self.P_denominator(combination)) * V
             
         return P_gamma
-            
-            
-                
-        
-        
-        # Create the polynomial 
-        
-        
-        return denominator
-                
-
-
 
 ####################################################################################
 
-
 def inner_product_partitions(partition1, partition2):
-
     # Convert the partitions to Conjugates
     partition1c = Partition(partition1).conjugate()
     partition2c = Partition(partition2).conjugate()
-    print(partition1c)
-    print(partition2c)
+    
     # Compute the inner product as the dot product
     inner_product = 0
     m = min(len(partition1c), len(partition2c))
     for i in range(m):
         inner_product = inner_product + partition1c[i] * partition2c[i]
         
-    
     return inner_product
 
 def b_pi(partition):
-    
     product = 1
     exp = Partition(partition).to_exp()
     for i in exp:
         product = product * Phi(i)
         
     return product
-        
 
-def Phi(int):
+def Phi(n):
     product = 1
-    if int == 0:
+    if n == 0:
         return 1
     else:
-        for i in range(1,int+1):
-            product = product*(1-q^(-i))
+        for i in range(1, n+1):
+            product = product * (1 - q^(-i))
         
         return product
-
-
-
-
-####################################################################################
 
