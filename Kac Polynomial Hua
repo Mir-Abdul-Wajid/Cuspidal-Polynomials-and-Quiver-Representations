@@ -41,12 +41,7 @@ class QuiverRepresentation:
         T = PolynomialRing(K, len(dimension_vector), variable_names)
         self.variables = T.gens()
         
-        self.partitions = []
-
-        for i in range(len(dimension_vector)):
-            self.partitions.append([])
-            for j in range(dimension_vector[i] + 1):
-                self.partitions[i] = self.partitions[i] + Partitions(j).list()
+        
 
     def display(self):
         """
@@ -75,7 +70,7 @@ class QuiverRepresentation:
         else:
             return self.edges.count((vertex1, vertex2)) + self.edges.count((vertex2, vertex1))
 
-    def P_numerator(self, Part):
+    def P_numerator(self, Part, w):
         """
         input: n partitions as an array Part
 
@@ -93,11 +88,11 @@ class QuiverRepresentation:
                 aij = self.count_edges_between(vertex1, vertex2)                               
                 power = power + aij * ip
 
-        numerator = q^power
+        numerator = w^power
 
         return numerator
 
-    def P_denominator(self, Part):
+    def P_denominator(self, Part, w):
         """
         input: n partitions as an array
 
@@ -109,13 +104,13 @@ class QuiverRepresentation:
         denominator = 1
         for i in range(l):
             ip = inner_product_partitions(Part[i], Part[i])
-            b = b_pi(Part[i])
-            denominator = denominator * q^ip * b
+            b = b_pi(Part[i], w)
+            denominator = denominator * w^ip * b
             
 
         return denominator
 
-    def P_Gamma(self):
+    def P_Gamma(self, Part, w):
         """
         To compute the polynomial P_{Gamma}(X_1,X_2,...,X_n,q)
         
@@ -128,16 +123,88 @@ class QuiverRepresentation:
         P_gamma = 0
         
         # Generate the Cartesian product of the lists
-        cartesian_product = itertools.product(*self.partitions)
+        cartesian_product = itertools.product(*Part)
 
         # Iterate over each combination in the Cartesian product
         for combination in cartesian_product:
             V = 1
             for i in range(len(combination)):
                 V = V * self.variables[i]^sum(combination[i])
-            P_gamma = P_gamma + (self.P_numerator(combination) / self.P_denominator(combination)) * V
+            P_gamma = P_gamma + (self.P_numerator(combination, w) / self.P_denominator(combination, w)) * V
             
         return P_gamma
+    
+    def log_P(self, Part, alpha, w):
+        """
+        Calculates log P series upto the required length
+        """
+        dim = sum(alpha) + 1
+        
+        P_gamma_1 = self.P_Gamma(Part, w)-1
+        
+        log = 0
+        
+        for i in range(1, dim):
+            log = log + ((-1)^(i-1) * P_gamma_1^(i))/i
+            
+        return log
+    
+    
+    def H_Gamma(self, alpha, w):
+        
+        """
+        Computes H_Gamma by matcing coefficients with log_P
+        
+        """
+            
+        a = gcd(alpha)
+        
+        partitions = []
+
+        for i in range(len(alpha)):
+            partitions.append([])
+            for j in range(alpha[i] + 1):
+                partitions[i] = partitions[i] + Partitions(j).list()
+        
+        
+        V = 1
+        
+        log_P = self.log_P(partitions, alpha, w)
+        
+        for i in range(len(alpha)):
+                V = V * self.variables[i]^sum(alpha[i])
+                
+        H_gamma = log_P.monomial_coefficient(V) * a
+        
+        return H_gamma
+    
+    
+    def A_Gamma(self):
+        """
+        
+        """
+        
+        a = gcd(self.dimension_vector)
+        
+        b = (q-1)/a
+        
+        Div = divisors(a)
+        
+        A_gamma = 0
+        aplha = self.dimension_vector
+        for i in Div:
+            for j in range(len(alpha)):
+                alpha[j] = alpha[j]/i 
+            w = q^i
+            A_gamma = A_gamma + moebius(i) * self.H_Gamma(alpha, w)
+            
+            
+        A_gamma = b * A_gamma
+        
+        return A_gamma
+        
+        
+        
 
 ####################################################################################
 
@@ -154,22 +221,24 @@ def inner_product_partitions(partition1, partition2):
         
     return inner_product
 
-def b_pi(partition):
+def b_pi(partition, w):
     product = 1
     exp = Partition(partition).to_exp()
     for i in exp:
-        product = product * Phi(i)
+        product = product * Phi(i, w)
         
     return product
 
 
     
-def Phi(n):
+def Phi(n, w):
     product = 1
     if n == 0:
         return 1
     else:
         for i in range(1, n+1):
-            product = product * (1 - q^(-i))
+            product = product * (1 - w^(-i))
         return product
+
+####################################################################################
 
