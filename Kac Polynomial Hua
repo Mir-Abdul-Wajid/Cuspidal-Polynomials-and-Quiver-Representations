@@ -246,3 +246,24 @@ def Phi(n, w):
         return product
 
 ####################################################################################
+
+
+# Define the quiver components with repeated edges
+Q_0 = ['v1']  # Vertices of the quiver
+Q_1 = [('v1', 'v1'), ('v1', 'v1')]  # Edges of the quiver, including repeated edges
+alpha = [6]  # Dimension vector
+
+# Initialize the quiver representation object
+quiver_rep = QuiverRepresentation(Q_0, Q_1, alpha)
+
+# Display the quiver
+quiver_rep.display()
+
+# Count the edges between 'v1' and 'v2'
+#print(f"Edges between 'v1' and 'v2': {quiver_rep.count_edges_between('v1', 'v2')}")
+
+# Print the variables and polynomial
+print(quiver_rep.variables)
+print(quiver_rep.A_Gamma())
+
+print('end')
