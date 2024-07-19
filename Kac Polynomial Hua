@@ -336,3 +336,44 @@ def pexp(poly, limit):
     return pexp
 
 ####################################################################################
+
+####################################################################################
+
+# Define the quiver components with repeated edges
+Q_0 = ['v1']  # Vertices of the quiver
+Q_1 = [('v1', 'v1'), ('v1', 'v1'),('v1','v1')]  # Edges of the quiver, including repeated edges
+alpha = [5]  # Dimension vector
+
+M_0 = ['v1', 'v2']  # Vertices of the quiver
+M_1 = [('v1', 'v2'), ('v1', 'v2'), ('v2', 'v1')]  # Edges of the quiver, including repeated edges
+beta = [2, 3]  # Dimension vector
+
+N_0 = ['v1', 'v2', 'v3']  # Vertices of the quiver
+N_1 = [('v1', 'v2'), ('v2', 'v1'), ('v2', 'v3')]  # Edges of the quiver, including repeated edges
+gamma = [1, 1, 0]  # Dimension vector
+
+# Initialize the quiver representation object
+quiver_rep = QuiverRepresentation(Q_0, Q_1, alpha)
+quiverM_rep = QuiverRepresentation(M_0, M_1, beta)
+quiverN_rep = QuiverRepresentation(N_0, N_1, gamma)
+
+#List of Kac Polynomials upto m
+
+kac_upto_m = [q^3,
+              q^9 + q^7 + q^5,
+              q^19 + q^17 + q^16 + q^15 + q^14 + 2*q^13 + q^12 + 2*q^11 + 2*q^10 + q^9 + q^8 + q^7,
+              q^33 + q^31 + q^30 + 2*q^29 + q^28 + 3*q^27 + 2*q^26 + 4*q^25 + 3*q^24 + 5*q^23 + 4*q^22 + 7*q^21 + 5*q^20 + 8*q^19 + 6*q^18 + 9*q^17 + 6*q^16 + 8*q^15 + 5*q^14 + 6*q^13 + 3*q^12 + 3*q^11 + q^10 + q^9,
+              q^51 + q^49 + q^48 + 2*q^47 + 2*q^46 + 3*q^45 + 3*q^44 + 5*q^43 + 5*q^42 + 7*q^41 + 7*q^40 + 10*q^39 + 10*q^38 + 13*q^37 + 14*q^36 + 17*q^35 + 18*q^34 + 22*q^33 + 23*q^32 + 27*q^31 + 28*q^30 + 32*q^29 + 33*q^28 + 37*q^27 + 38*q^26 + 40*q^25 + 40*q^24 + 41*q^23 + 39*q^22 + 38*q^21 + 34*q^20 + 31*q^19 + 26*q^18 + 21*q^17 + 16*q^16 + 11*q^15 + 7*q^14 + 4*q^13 + 2*q^12 + q^11
+             ]
+
+
+# Display the quiver
+quiver_rep.display()
+
+# Print the variables and polynomial
+print(quiver_rep.variables)
+print(quiver_rep.A_Gamma())
+
+print('end')
+#print(quiver_rep.C_Gamma())
+print(quiver_rep.C_Gamma_list(kac_upto_m))
