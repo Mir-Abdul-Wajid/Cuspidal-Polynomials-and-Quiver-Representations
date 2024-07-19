@@ -351,9 +351,9 @@ def pexp(poly, limit):
         
         # Multiply the term into the plethystic exponential result
         pexp_result *= term
-        print(f"Processed monomial: {monomial}, coefficient: {coefficient}")
+        #print(f"Processed monomial: {monomial}, coefficient: {coefficient}")
     
-    print(f"Plethystic exponential: {pexp_result}")
+    #print(f"Plethystic exponential: {pexp_result}")
     return pexp_result
 
 ####################################################################################
