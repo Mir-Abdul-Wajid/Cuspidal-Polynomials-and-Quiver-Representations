@@ -241,7 +241,50 @@ class QuiverRepresentation:
         else:
             return None
     
-   
+   def C_Gamma_list(self, kac_upto_m):
+        """
+        Only defined for quivers with one vertex and n > 1 loops, 
+        
+        Input: Quiver + List of Kac polynomials upto m
+        
+        """
+        
+        if len(self.vertices) == 1:
+            m = gcd(self.dimension_vector)
+            P_local.<t,q> = PolynomialRing(QQ)
+            inpol = 0
+            for i in range(0, m ):
+                
+                kac = kac_upto_m[i]
+                Kac_i = P_local(kac)         
+                inpol = inpol - Kac_i * t^(i+1)              
+                
+                       
+            p_poly = P_local(inpol)
+            print('p_poly: ', p_poly)
+            Plethystic = pexp(p_poly, m)
+            
+            print('plethystic: ', Plethystic)
+            
+            Pe = 1 - Plethystic
+            
+            p = P_local(Pe)
+                
+            
+            pol = p.dict()
+            mon = pol.keys()
+            mon_m = []
+            for i in mon:
+                if i[0] == m:
+                    mon_m = mon_m + [i]
+            C_gamma = 0        
+            for j in mon_m:
+                C_gamma = C_gamma + pol[j]*q^j[1]
+            
+            
+            return C_gamma
+        else:
+            return None
 
 ####################################################################################
 
