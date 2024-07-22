@@ -8,10 +8,16 @@ from sage.all import *
 import itertools
 
 # Define the polynomial ring
-R = PolynomialRing(QQ, 'q,t')
-q, t = R.gens()
+R = PolynomialRing(QQ, 'q')
+S = PolynomialRing(QQ, 't')
+q = R.gen()
+t = S.gen()
+
+# Define the partition class
 K = R.fraction_field()
 
+print(R)
+print(S)
 class QuiverRepresentation:
     """
     A class to represent a quiver with vertices, edges, and a dimension vector.
@@ -50,7 +56,7 @@ class QuiverRepresentation:
             V = V * self.variables[i]**(self.dimension_vector[i]+1)
 
         self.T_quo = self.T.quotient(V)
-        print(self.T_quo)
+
 
     def display(self):
         """
@@ -98,7 +104,7 @@ class QuiverRepresentation:
                 power = power + aij * ip
 
         numerator = self.T(w**power)
-        
+
         return numerator
 
     def P_denominator(self, Part, w):
@@ -115,7 +121,7 @@ class QuiverRepresentation:
             ip = inner_product_partitions(Part[i], Part[i])
             b = self.T_quo(b_pi(Part[i], w))
             denominator = self.T(denominator * w**ip * b)
-        
+
         return denominator
 
     def P_Gamma(self, Part, w):
@@ -139,7 +145,7 @@ class QuiverRepresentation:
             for i in range(len(combination)):
                 V = V * self.variables[i]**sum(combination[i])
             P_gamma = P_gamma + (self.P_numerator(combination, w) / self.P_denominator(combination, w)) * V
-        
+
         return P_gamma
 
     def log_P(self, Part, alpha, w):
@@ -155,7 +161,7 @@ class QuiverRepresentation:
 
         for i in range(1, dim):
             log = log + self.T_quo(((-1)**(i-1) * P_gamma_1**(i)) / i)
-        
+
         return log
 
     def H_Gamma(self, alpha, w):
@@ -185,7 +191,7 @@ class QuiverRepresentation:
 
 
         H_gamma = log_P.lift().monomial_coefficient(V) * a
-        
+
         return H_gamma
 
     def A_Gamma(self):
@@ -214,7 +220,7 @@ class QuiverRepresentation:
                 A_gamma = A_gamma + moebius(i) * self.H_Gamma(alpha, w)
 
         A_gamma = b * A_gamma
-        
+
         return A_gamma
 
     def C_Gamma(self):
@@ -352,33 +358,47 @@ def pexp(poly, limit):
     Polynomial
         The plethystic exponential of the polynomial.
     """
-    pol = poly.dict()
+    # Define the quotient ring
+    S = poly.parent()
+    t, q = S.gens()
+    S_quo = S.quotient(S.ideal([t**(limit + 1)]))
+
+    # Convert the polynomial to the quotient ring
+    poly_quo = S_quo(poly)
+
 
     # Initialize the plethystic exponential as 1 (the multiplicative identity)
-    pexp_result = 1
-    print(len())
+    pexp_result = S_quo(1)
+
     # Iterate over the monomials and their coefficients
-    for monomial, coefficient in pol.items():
-        s = t**monomial[0] * q**monomial[1]
+    for monomial, coefficient in poly_quo.lift().dict().items():
+        s1 = (t**monomial[0])
+        s2 = (q**monomial[1])
+        s = s1 * s2
         term = (1 - s)**(-coefficient)
 
         # Multiply the term into the plethystic exponential result
         pexp_result *= term
-        print(f"Processed monomial: {monomial}, coefficient: {coefficient}")
 
-    print(f"Plethystic exponential: {pexp_result}")
+
+    pexp_result = pexp_result.lift()
+
     return pexp_result
+
+
+
+
 
 ####################################################################################
 
 # Define the quiver components with repeated edges
 Q_0 = ['v1']  # Vertices of the quiver
-Q_1 = [('v1', 'v1'), ('v1', 'v1'),('v1','v1'), ('v1', "v1"), ('v1', 'v1')]  # Edges of the quiver, including repeated edges
-alpha = [3]  # Dimension vector
+Q_1 = [('v1', 'v1'), ('v1', 'v1'),('v1','v1')]  # Edges of the quiver, including repeated edges
+alpha = [5]  # Dimension vector
 
 M_0 = ['v1']  # Vertices of the quiver
 M_1 = [('v1', 'v1'), ('v1', 'v1')]  # Edges of the quiver, including repeated edges
-beta = [11]  # Dimension vector
+beta = [4]  # Dimension vector
 
 N_0 = ['v1', 'v2', 'v3']  # Vertices of the quiver
 N_1 = [('v1', 'v2'), ('v2', 'v1'), ('v2', 'v3')]  # Edges of the quiver, including repeated edges
@@ -398,12 +418,12 @@ kac_upto_m = [q**3,
              ]
 
 # Display the quiver
-quiverM_rep.display()
+quiver_rep.display()
 
 # Print the variables and polynomial
-print(quiverM_rep.variables)
-print(quiverM_rep.A_Gamma())
+print(quiver_rep.variables)
+print(quiver_rep.A_Gamma())
 
 print('end')
-#print(quiver_rep.C_Gamma())
+print(quiver_rep.C_Gamma())
 #print(quiver_rep.C_Gamma_list(kac_upto_m))
